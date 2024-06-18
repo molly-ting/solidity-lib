@@ -10,8 +10,9 @@ library SafeERC20Namer {
     function bytes32ToString(bytes32 x) private pure returns (string memory) {
         bytes memory bytesString = new bytes(32);
         uint256 charCount = 0;
+        bytes1 char;
         for (uint256 j = 0; j < 32; j++) {
-            bytes1 char = x[j];
+            char = x[j];
             if (char != 0) {
                 bytesString[charCount] = char;
                 charCount++;
@@ -71,24 +72,22 @@ library SafeERC20Namer {
     }
 
     // attempts to extract the token symbol. if it does not implement symbol, returns a symbol derived from the address
-    function tokenSymbol(address token) internal view returns (string memory) {
+    function tokenSymbol(address token) internal view returns (string memory symbol) {
         // 0x95d89b41 = bytes4(keccak256("symbol()"))
-        string memory symbol = callAndParseStringReturn(token, 0x95d89b41);
+        symbol = callAndParseStringReturn(token, 0x95d89b41);
         if (bytes(symbol).length == 0) {
             // fallback to 6 uppercase hex of address
             return addressToSymbol(token);
         }
-        return symbol;
     }
 
     // attempts to extract the token name. if it does not implement name, returns a name derived from the address
-    function tokenName(address token) internal view returns (string memory) {
+    function tokenName(address token) internal view returns (string memory name) {
         // 0x06fdde03 = bytes4(keccak256("name()"))
-        string memory name = callAndParseStringReturn(token, 0x06fdde03);
+        name = callAndParseStringReturn(token, 0x06fdde03);
         if (bytes(name).length == 0) {
             // fallback to full hex of address
             return addressToName(token);
         }
-        return name;
     }
 }
